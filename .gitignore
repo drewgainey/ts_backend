@@ -1,0 +1,12 @@
+# Ignore environment variables and API keys
+.env
+config.json
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Python-specific packages
+venv/
