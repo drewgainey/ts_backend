@@ -1,6 +1,8 @@
 # Ignore environment variables and API keys
 .env
 config.json
+.idea
+treasury.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -3,8 +3,11 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from typing import List
-from database import init_db, insert_access_token, insert_accounts, insert_transaction_data, get_transaction_details
-from plaid_client import create_link_token, exchange_public_token, get_accounts, sync_transactions
+from db.transactions import  insert_transaction_data, get_transaction_details
+from db.db_init import init_db
+from db.items import insert_access_token
+from db.accounts import insert_accounts
+from util.plaid_client import create_link_token, exchange_public_token, get_accounts, sync_transactions
 from models import PublicTokenRequest, TransactionDetailResponse
 
 # Load environment variables
