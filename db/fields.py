@@ -1,4 +1,4 @@
-from db.db_connection import get_db_connection
+from .db_connection import get_db_connection
 
 def get_all_fields():
     conn = get_db_connection()

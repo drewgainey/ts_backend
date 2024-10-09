@@ -2,8 +2,8 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException
 
-from db.transactions import get_transaction_details
-from models.api import TransactionDetailResponse
+from db import get_transaction_details
+from models import TransactionDetailResponse
 
 router = APIRouter(prefix='/accounts', tags=['accounts'])
 

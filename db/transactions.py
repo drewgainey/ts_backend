@@ -1,5 +1,5 @@
-from db.db_connection import get_db_connection
-from models.plaid import PlaidTransaction
+from .db_connection import get_db_connection
+from models import PlaidTransaction
 
 
 def insert_transaction_data(transactions: [PlaidTransaction]):

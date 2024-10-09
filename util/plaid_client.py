@@ -11,7 +11,7 @@ from plaid.model.transactions_sync_request import TransactionsSyncRequest
 from plaid.model.products import Products
 from plaid.model.country_code import CountryCode
 
-from db.items import get_transactions_cursor, update_transactions_cursor
+from db import get_transactions_cursor, update_transactions_cursor
 from models.plaid import PlaidAccount
 
 # Load environment variables

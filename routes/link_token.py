@@ -2,10 +2,8 @@ import sqlite3
 
 from fastapi import APIRouter, HTTPException
 
-from db.accounts import insert_accounts
-from db.items import insert_access_token
-from db.transactions import insert_transaction_data
-from models.api import PublicTokenRequest
+from db import insert_accounts, insert_access_token, insert_transaction_data
+from models import PublicTokenRequest
 from util.plaid_client import create_link_token, exchange_public_token, get_accounts, sync_transactions
 
 router = APIRouter(prefix='/link_token', tags=['link_token'])

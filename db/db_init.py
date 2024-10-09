@@ -1,6 +1,4 @@
-import sqlite3
-
-from db.db_connection import get_db_connection
+from .db_connection import get_db_connection
 
 def init_db():
     """Initialize the SQLite database and create the required tables if they don't exist."""
