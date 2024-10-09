@@ -1,23 +1,38 @@
 from db.db_connection import get_db_connection
-from models import PlaidTransaction
+from models.plaid import PlaidTransaction
+
 
 def insert_transaction_data(transactions: [PlaidTransaction]):
     conn = get_db_connection()
     cursor = conn.cursor()
-    """Insert any new merchants into the merchants table and get merchant id's"""
-    unique_merchants = {trans.name for trans in transactions}
-    unique_merchants_tuple = tuple(unique_merchants)
 
+    """Insert any new merchants into the merchants table and get merchant IDs"""
+    unique_merchants = {(trans.merchant_name, trans.logo_url) for trans in transactions if
+                        trans.merchant_name is not None}
+    unique_merchants_tuple = tuple(merchant for merchant in unique_merchants)
+
+    # Modify the merchant query to search for both merchant name and logo URL
     merchant_query = 'SELECT id, merchant_name FROM merchants WHERE merchant_name IN ({})'.format(
-        ','.join('?' * len(unique_merchants_tuple)))
-    cursor.execute(merchant_query, unique_merchants_tuple)
-    merchant_dict = {row['merchant_name']: row['id'] for row in cursor.fetchall()}
+        ','.join('?' * len([name for name, logo in unique_merchants_tuple])))
 
-    missing_merchants = unique_merchants - set(merchant_dict.keys())
-    for name in missing_merchants:
-        cursor.execute('INSERT INTO merchants (merchant_name) VALUES (?)', (name,))
+    merchant_names = [name for name, logo in unique_merchants_tuple]  # Extract just the names for query
+    cursor.execute(merchant_query, tuple(merchant_names))
+    merchant_dict = {row['merchant_name']: row['id'] for row in cursor.fetchall()}
+    missing_merchants = set(merchant_names) - set(merchant_dict.keys())
+
+    # Insert new merchants, with logo_url if available
+    for name, logo_url in unique_merchants:
+        if name in missing_merchants:
+            cursor.execute(
+                '''
+                INSERT INTO merchants (merchant_name, logo_url) 
+                VALUES (?, ?)
+                ''',
+                (name, logo_url)  # Insert logo_url along with merchant name
+            )
     conn.commit()
 
+    # Update merchant_dict with new merchant IDs
     if missing_merchants:
         query = 'SELECT id, merchant_name FROM merchants WHERE merchant_name IN ({})'.format(
             ','.join('?' * len(missing_merchants)))
@@ -25,28 +40,33 @@ def insert_transaction_data(transactions: [PlaidTransaction]):
 
         # Update the merchant_dict with the new merchant IDs
         merchant_dict.update({row['merchant_name']: row['id'] for row in cursor.fetchall()})
-    """Inset transactions"""
+
+    """Insert transactions"""
+    status_id = 1
     transactions_data = [(
         trans.transaction_id,
         trans.account_id,
         trans.amount,
         trans.date,
-        merchant_dict[trans.name],
+        trans.name,
+        merchant_dict.get(trans.merchant_name, 1),
         trans.iso_currency_code,
         trans.pending,
+        status_id
     ) for trans in transactions]
 
     cursor.executemany(
         '''
         INSERT OR IGNORE INTO transactions 
-        (transaction_id, account_id, amount, date, merchant_id, currency, pending) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        (transaction_id, account_id, amount, date, description, merchant_id, currency, pending, status_id) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''',
         transactions_data
     )
 
     conn.commit()
     conn.close()
+
 
 def get_transaction_details():
     conn = get_db_connection()
@@ -60,7 +80,9 @@ def get_transaction_details():
                 a.account_official_name account_official_name,
                 t.amount amount,
                 t.date date,
+                t.description description,
                 m.merchant_name merchant_name,
+                m.logo_url logo_url,
                 t.currency currency,
                 t.pending pending,
                 g.gl_account_number gl_account_number,
@@ -79,7 +101,9 @@ def get_transaction_details():
             "account_official_name": row["account_official_name"],
             "amount": row["amount"],
             "date": row["date"],
+            "description": row["description"],
             "merchant_name": row["merchant_name"],
+            "logo_url": row["logo_url"],
             "currency": row["currency"],
             "pending": row["pending"],
             "gl_account_number": row["gl_account_number"],

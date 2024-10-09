@@ -1,5 +1,5 @@
 from db.db_connection import get_db_connection
-from models import PlaidAccount
+from models.plaid import PlaidAccount
 
 # Account information operations
 def insert_accounts(item_id: str, accounts: [PlaidAccount]):
