@@ -1,5 +1,8 @@
 from .accounts_schema import CREATE_ACCOUNTS_TABLE
-from .erp_fields_schema import CREATE_GL_ACCOUNTS_TABLE, INSERT_GL_ACCOUNTS
+from .erp_fields_schema import (CREATE_GL_ACCOUNTS_TABLE, INSERT_GL_ACCOUNTS,
+                                CREATE_ACCOUNTING_ENTITIES_TABLE,
+                                INSERT_ACCOUNTING_ENTITIES, CREATE_DEPARTMENTS_TABLE,
+                                INSERT_DEPARTMENTS)
 from .items_schema import CREATE_ITEMS_TABLE
 from .merchants_schema import CREATE_MERCHANTS_TABLE, INSERT_INITIAl_MERCHANTS
 from .transactions_schema import CREATE_TRANSACTIONS_TABLE, CREATE_TRANSACTIONS_STATUS_TABLE, INSERT_TRANSACTIONS_STATUS
@@ -12,6 +15,10 @@ ALL_SCHEMAS = [
     #Create tables for ERP fields next
     CREATE_GL_ACCOUNTS_TABLE,
     INSERT_GL_ACCOUNTS,
+    CREATE_ACCOUNTING_ENTITIES_TABLE,
+    INSERT_ACCOUNTING_ENTITIES,
+    CREATE_DEPARTMENTS_TABLE,
+    INSERT_DEPARTMENTS,
     #Create any tables that any transaction tables would depend on
     CREATE_MERCHANTS_TABLE,
     INSERT_INITIAl_MERCHANTS,
