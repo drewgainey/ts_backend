@@ -1,6 +1,5 @@
 from fastapi import APIRouter
-
-from db.fields import get_all_fields
+from db import get_all_fields
 
 router = APIRouter(prefix='/fields', tags=['fields'])
 

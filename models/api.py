@@ -3,11 +3,10 @@ from datetime import date
 from pydantic import BaseModel
 from typing import Optional
 
-# API Requests
 class PublicTokenRequest(BaseModel):
     public_token: str
 
-class TransactionDetailResponse(BaseModel):
+class AccountDetailResponse(BaseModel):
     transaction_id: str
     account_name: str
     account_official_name: Optional[str]
@@ -20,3 +19,10 @@ class TransactionDetailResponse(BaseModel):
     pending: bool
     gl_account_number: Optional[str]
     gl_account_name: Optional[str]
+
+class BankAccountsResponse(BaseModel):
+    account_id: str
+    account_name: str
+    account_official_name: str
+    institution_name: Optional[str]
+    account_mask: Optional[str]
