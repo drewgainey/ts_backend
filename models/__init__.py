@@ -1,2 +1,2 @@
 from .plaid import PlaidAccount, PlaidBalance, PlaidTransaction
-from .api import TransactionDetailResponse, PublicTokenRequest
+from .api import AccountDetailResponse, PublicTokenRequest

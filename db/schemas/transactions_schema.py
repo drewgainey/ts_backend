@@ -19,7 +19,7 @@ CREATE_TRANSACTIONS_TABLE = '''
               FOREIGN KEY(gl_account_id) REFERENCES gl_accounts(id),
               FOREIGN KEY(status_id) REFERENCES transactions_status(id),
               FOREIGN KEY(accounting_entity_id) REFERENCES accounting_entities(id),
-              FOREIGN KEY (department_id) REFERENCES departments(id)
+              FOREIGN KEY (department_id) REFERENCES departments(id) 
               )
       '''
 # Create transactions status table

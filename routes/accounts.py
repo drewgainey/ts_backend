@@ -2,12 +2,17 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException
 
-from db import get_transaction_details
-from models import TransactionDetailResponse
+from db import get_transaction_details, get_bank_accounts
+from models import AccountDetailResponse
 
 router = APIRouter(prefix='/accounts', tags=['accounts'])
 
-@router.get("/details", response_model=List[TransactionDetailResponse])
+
+@router.get(path='')
+def api_get_account():
+    accounts = get_bank_accounts()
+    return accounts
+@router.get("/details", response_model=List[AccountDetailResponse])
 def api_get_accounts_with_transactions():
     """API route to fetch all accounts with their associated transactions."""
     try:

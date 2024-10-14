@@ -2,9 +2,9 @@ import sqlite3
 
 from fastapi import APIRouter, HTTPException
 
-from db import insert_accounts, insert_access_token, insert_transaction_data
+from db import insert_accounts, insert_access_token, insert_transaction_data, insert_institution
 from models import PublicTokenRequest
-from util.plaid_client import create_link_token, exchange_public_token, get_accounts, sync_transactions
+from util.plaid_client import create_link_token, exchange_public_token, get_accounts, sync_transactions, get_item_details, get_institution
 
 router = APIRouter(prefix='/link_token', tags=['link_token'])
 
@@ -23,9 +23,13 @@ async def exchange_public_token_api(request: PublicTokenRequest):
         access_token, item_id = exchange_public_token(request)
         insert_access_token(item_id, access_token)
 
+        # Get institution information for linked item
+        item = get_item_details(access_token)
+        institution = get_institution(institution_id=item.institution_id)
+        db_institution_id = insert_institution(plaid_institution_id=item.institution_id, institution_name=institution.institution.name)
         # Get account(s) information
         accounts = get_accounts(access_token)
-        insert_accounts(item_id=item_id, accounts=accounts)
+        insert_accounts(item_id=item_id, accounts=accounts, institution_id=db_institution_id)
         # Get transactions up to date
         added = sync_transactions(item_id=item_id, access_token=access_token)
         insert_transaction_data(added)
