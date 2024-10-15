@@ -42,7 +42,6 @@ def insert_transaction_data(transactions: [PlaidTransaction]):
         merchant_dict.update({row['merchant_name']: row['id'] for row in cursor.fetchall()})
 
     """Insert transactions"""
-    status_id = 1
     transactions_data = [(
         trans.transaction_id,
         trans.account_id,
@@ -51,15 +50,14 @@ def insert_transaction_data(transactions: [PlaidTransaction]):
         trans.name,
         merchant_dict.get(trans.merchant_name, 1),
         trans.iso_currency_code,
-        trans.pending,
-        status_id
+        trans.pending
     ) for trans in transactions]
 
     cursor.executemany(
         '''
         INSERT OR IGNORE INTO transactions 
-        (transaction_id, account_id, amount, date, description, merchant_id, currency, pending, status_id) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        (transaction_id, account_id, amount, date, description, merchant_id, currency, pending) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ''',
         transactions_data
     )
@@ -84,13 +82,10 @@ def get_transaction_details():
                 m.merchant_name merchant_name,
                 m.logo_url logo_url,
                 t.currency currency,
-                t.pending pending,
-                g.gl_account_number gl_account_number,
-                g.gl_account_name gl_account_name
+                t.pending pending
         from transactions t
             inner join accounts a on t.account_id = a.account_id
             left join merchants m on m.id = t.merchant_id
-            left join gl_accounts g on g.id = t.gl_account_id
         """)
     result = cursor.fetchall()
 
@@ -106,8 +101,6 @@ def get_transaction_details():
             "logo_url": row["logo_url"],
             "currency": row["currency"],
             "pending": row["pending"],
-            "gl_account_number": row["gl_account_number"],
-            "gl_account_name": row["gl_account_name"]
         }
         for row in result
     ]

@@ -17,8 +17,6 @@ class AccountDetailResponse(BaseModel):
     logo_url: Optional[str]
     currency: Optional[str]
     pending: bool
-    gl_account_number: Optional[str]
-    gl_account_name: Optional[str]
 
 class BankAccountsResponse(BaseModel):
     account_id: str
