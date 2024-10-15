@@ -95,4 +95,4 @@ def get_bank_accounts():
     ]
 
     conn.close()
-    return accounts
+    return {"accounts" : accounts}
